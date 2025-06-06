@@ -1,0 +1,31 @@
+<mvc:View controllerName="com.test.controller.MainView"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+        <VBox class="sapUiSmallMargin" >
+        <!-- <List items="{prodModel>/products}" itemPress=".onItemPress">
+            <CustomListItem >
+                <HBox
+                    class="{=${prodModel>stock} < 10?'low':''}"
+                >
+                    <Text  text={prodModel>name}></Text>
+                    <Text  text={prodModel>model}></Text>
+                    <Text  text={prodModel>price}></Text>
+                    <Text  text={prodModel>stock}></Text>
+                </HBox>
+            </CustomListItem>
+        </List> -->
+        <List id="prodList" items="{/products}" itemPress="onProdPress">
+        <StandardListItem 
+            title="{name}"
+            description="{model}-Rs.{price}"
+            type="Active"
+            
+        ></StandardListItem>
+
+        </List>
+
+
+        </VBox>
+    </Page>
+</mvc:View>
