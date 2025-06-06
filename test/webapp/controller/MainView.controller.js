@@ -1,69 +1,53 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
-    "sap/m/Dialog",
-    "sap/m/Button",
-    "sap/m/Text"
-], (Controller,JSONModel,Dialog,Button,Text) => {
+    "sap/ui/core/Fragment",
+    "com/test/util/formatter"
+], (Controller, JSONModel, Fragment, formatter)  => {
     "use strict";
 
     return Controller.extend("com.test.controller.MainView", {
-        onInit() {
-            const oData={
-                products:[
-                    {
-                        "name":"Mobile",
-                        "model":"Samgsung s24",
-                        "stock":6,
-                        "price":85000,
-                        "details":"Moblie with best camera"
-                    },
-                    {
-                        "name":"AC",
-                        "model":"Samgsung7",
-                        "stock":12,
-                        "price":70000,
-                        "details":"AC with energy saver"
-                    },
-                    {
-                        "name":"TV",
-                        "model":"Onida",
-                        "stock":4,
-                        "price":60000,
-                        "details":"Updated to smart TV"
-                    }
-                ]
+        // Make the formatter available in the view
+        formatter: formatter,
+        // onInit: function () {
+        //     var oModel = new JSONModel("model/products.json"); // path must be relative to index.html
+        //     this.getView().setModel(oModel, "products");
+        // },
+
+        onListItemPress: function (oEvent) {
+            // Get the item that was clicked
+            var oListItem = oEvent.getSource();
+            // Get the binding context to know which product was clicked
+            var oBindingContext = oListItem.getBindingContext("products");
+
+            // Check if the dialog already exists
+            if (!this.pDialog) {
+                // if not, load the fragment
+                this.pDialog = Fragment.load({
+                    id: this.getView().getId(),
+                    name: "com.test.view.ProductDetails",
+                    controller: this // Pass the controller to the fragment
+                }).then(function (oDialog) {
+                    // connect dialog to the view's lifecycle
+                    this.getView().addDependent(oDialog);
+                    return oDialog;
+                }.bind(this));
             }
-            const oModel=new JSONModel(oData);
-            this.getView().setModel(oModel);
-        },
-        onProdPress:function(oEvent){
-            const oItem=oEvent.getSource();
-            const oContext=oItem.getBindingContext();
-            const oData=oContext.getObject();
-            if(!this._oDialog){
-                this._oDialog=new Dialog({
-                    title:"Product details",
-                    content:new Text({text:""}),
-                    beginButton:new sap.m.Button({
-                        text:"Close",
-                        press:function(){
-                            this._oDialog.close();
-                        }.bind(this)
-                    })
+
+            // After the dialog is loaded, open it and bind the data
+            this.pDialog.then(function(oDialog) {
+                // Bind the dialog to the specific product path
+                oDialog.bindElement({
+                    path: oBindingContext.getPath(),
+                    model: "products"
                 });
-                this.getView().addDependent(this._oDialog);
-            }
-            this._oDialog.getContent()[0].setText(
-                `Name:${oData.name}
-                Model:${oData.model}
-                Stock:${oData.stock}
-                Price:${oData.price}
-                Description:${oData.description}`
-            );
-            this._oDialog.open();
+                oDialog.open();
+            });
+        },
 
+        onCloseDialog: function () {
+            // Get the dialog by its ID and close it
+            this.byId("productDetailsDialog").close();
         }
-
     });
 });

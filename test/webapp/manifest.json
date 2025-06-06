@@ -76,6 +76,10 @@
           "bundleName": "com.test.i18n.i18n"
         }
       },
+      "products": {
+                "type": "sap.ui.model.json.JSONModel",
+                "uri": "model/products.json"
+            },
       "": {
         "dataSource": "mainService",
         "preload": true,

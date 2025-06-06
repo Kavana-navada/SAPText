@@ -1,31 +1,40 @@
 <mvc:View controllerName="com.test.controller.MainView"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
-        <VBox class="sapUiSmallMargin" >
-        <!-- <List items="{prodModel>/products}" itemPress=".onItemPress">
-            <CustomListItem >
-                <HBox
-                    class="{=${prodModel>stock} < 10?'low':''}"
-                >
-                    <Text  text={prodModel>name}></Text>
-                    <Text  text={prodModel>model}></Text>
-                    <Text  text={prodModel>price}></Text>
-                    <Text  text={prodModel>stock}></Text>
-                </HBox>
-            </CustomListItem>
-        </List> -->
-        <List id="prodList" items="{/products}" itemPress="onProdPress">
-        <StandardListItem 
-            title="{name}"
-            description="{model}-Rs.{price}"
-            type="Active"
-            
-        ></StandardListItem>
-
-        </List>
-
-
-        </VBox>
+    xmlns="sap.m"
+    id="view1">
+    <Page id="page" title="Product List">
+        <content>
+            <List
+                id="productsList"
+                headerText="Products"
+                items="{products>/products}">
+                <items>
+                    <ObjectListItem
+                        id="productListItem"
+                        title="{products>Name}"
+                        number="{
+                            parts: ['products>Price', 'products>CurrencyCode'],
+                            type: 'sap.ui.model.type.Currency',
+                            formatOptions: {
+                                showMeasure: false
+                            }
+                        }"
+                        numberUnit="{products>CurrencyCode}"
+                        type="Navigation"
+                        press=".onListItemPress"
+                       
+                        >
+                         <!-- highlight="{
+                            path: 'products>Stock',
+                            formatter: 'com.test.util.formatter.stockState'
+                        }" -->
+                        <attributes>
+                            <ObjectAttribute id="modelAttribute" text="Model: {products>Model}" />
+                            <ObjectAttribute id="stockAttribute" text="Stock Quantity: {products>Stock}" />
+                        </attributes>
+                    </ObjectListItem>
+                </items>
+            </List>
+        </content>
     </Page>
 </mvc:View>
